@@ -4,9 +4,9 @@
   "description": "A starting point for Node.js express apps with TypeScript",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/TypeScript-Node-Starter"
+    "url": "https://github.com/pleleu-dev/boilerplate-starter-pack"
   },
-  "author": "Bowden Kelly",
+  "author": "P.Leleu",
   "license": "MIT",
   "scripts": {
     "build-ts": "tsc",
