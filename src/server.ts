@@ -1,25 +1,38 @@
-import errorHandler from "errorhandler";
-import app from "./app";
+/* eslint-disable no-console */
+import dotenv from 'dotenv';
+import { ApolloServer, ApolloError } from 'apollo-server';
+import SessionAPI from "./dataSources/sessions";
+import UserAPI from "./dataSources/user";
 
 
-/**
- * Error Handler. Provides full stack
- */
-if (process.env.NODE_ENV === "development") {
-    app.use(errorHandler());
-}
+import typeDefs from './schema';
 
+import resolvers from './resolvers';
 
-/**
- * Start Express server.
- */
-const server = app.listen(app.get("port"), () => {
-    console.log(
-        "  App is running at http://172.22.240.53:3000/ in %s mode",
-        app.get("port"),
-        app.get("env")
-    );
-    console.log("  Press CTRL-C to stop\n");
+dotenv.config();
+    
+const dataSources = () =>({
+    sessionAPI : new SessionAPI(),
+    userAPI : new UserAPI(process.env.CLIENT_URL)
+})
+
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources,
+    debug : false,
+    formatError : (err)=>{
+        if(err.extensions.code === "INTERNAL_SERVER_ERROR"){
+            return new ApolloError('We are some trouble', "ERROR", { token : "id3435" })
+        }
+        return err;
+    }
 });
 
-export default server;
+server
+.listen({
+    port : process.env.PORT || 5000
+})
+.then(({ url })=>{
+    console.log(`QraphQL runnning at : ${url}`)
+})
